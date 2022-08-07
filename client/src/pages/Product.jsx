@@ -5,6 +5,11 @@ import Footer from "../components/Footer"
 import Navbar from "../components/Navbar"
 import Newsletter from "../components/Newsletter"
 import { mobile } from "../responsive"
+import {useLocation} from 'react-router-dom'
+import { useEffect, useState } from "react"
+import { publicRequest } from "../request.Method"
+import { addProduct } from "../redux/cartRedux"
+import { useDispatch } from "react-redux"
 
 const Container = styled.div``
 const Wrapper = styled.div`
@@ -105,45 +110,76 @@ const Button = styled.button`
 
 
 const Product = () => {
+    const location = useLocation()
+    const id = location.pathname.split("/")[2]
+
+    const [product, setProduct] = useState({})
+    const [quantity, setQuantity] = useState(1)
+    const [color, setColor] = useState()
+    const [size, setSize] = useState()
+    const dispatch = useDispatch()
+
+    useEffect(()=>{
+        const getProduct = async () => {
+            try {
+                const res = await publicRequest.get(`/products/find/${id}`)
+                setProduct(res.data)
+            } catch (err) {}
+        }
+        getProduct()
+    },[id])
+
+    const handleQuantity = (type) =>{
+        if(type === 'dec'){
+            quantity > 1 && setQuantity(quantity - 1)
+        }else {
+            setQuantity(quantity + 1)
+        }
+    }
+
+    const handleClick = ()=>{
+        dispatch(addProduct({...product, quantity, color, size}))
+    }
+   
   return (
     <Container>
         <Navbar/>
         <Announcement/>
         <Wrapper>
             <ImgContainer>
-                <Image src='https://images.unsplash.com/photo-1572804013427-4d7ca7268217?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1665&q=80'/>
+                <Image src={product.img}/>
             </ImgContainer>
             <InfoContainer>
-                <Title>Silk Dress</Title>
+                <Title>{product.title}</Title>
                 <Desc>
-                    Zombie ipsum reversus ab viral inferno, nam rick grimes malum cerebro. De carne lumbering animata corpora quaeritis. Summus brains sit​​, morbo vel maleficia? De apocalypsi gorger omero undead survivor dictum mauris. Hi mindless mortuis soulless creaturas, imo evil stalking monstra adventus resi dentevil vultus comedat cerebella viventium. Qui animated corpse, cricket bat max brucks terribilem incessu zomby. The voodoo sacerdos flesh eater, suscitat mortuos comedere carnem virus. Zonbi tattered for solum oculi eorum defunctis go lum cerebro. Nescio brains an Undead zombies. Sicut malus putrid voodoo horror. Nigh tofth eliv ingdead.
+                   {product.desc}
                 </Desc>
-                <Price>$ 1960</Price>
+                <Price>$ {product.price}</Price>
                 <FilterContainer>
                     <Filter>
                         <FilterTitle>Color</FilterTitle>
-                        <FilterColor color='red'/>
-                        <FilterColor color='black'/>
-                        <FilterColor color='grey'/>
+                        {product.color?.map(c=>(
+                            <FilterColor key={c} color={c} onClick={()=>setColor(c)}/>
+                       ))}
+                        
                     </Filter>
                     <Filter>
                         <FilterTitle>Size</FilterTitle>
-                        <FilterSize>
-                            <FilterSizeOption>XS</FilterSizeOption>
-                            <FilterSizeOption>S</FilterSizeOption>
-                            <FilterSizeOption>M</FilterSizeOption>
-                            <FilterSizeOption>L</FilterSizeOption>
-                            <FilterSizeOption>XL</FilterSizeOption>
+                        <FilterSize onChange={(e)=>setSize(e.target.value)}>
+                            {product.size?.map(s=> (
+                                <FilterSizeOption key={s}>{s}</FilterSizeOption>
+                           ))}
+
                         </FilterSize>
                     </Filter>
                 </FilterContainer>
                 <AddContainer>
                     <AmountContainer>
-                        <Remove/>
-                        <Amount>1</Amount>
-                        <Add/>
+                        <Remove style={{cursor: 'pointer'}} onClick={()=>handleQuantity('dec')}/>
+                        <Amount>{quantity}</Amount>
+                        <Add style={{cursor: 'pointer'}} onClick={()=>handleQuantity('inc')}/>
                     </AmountContainer>
-                    <Button>ADD TO CART</Button>
+                    <Button onClick={handleClick}>ADD TO CART</Button>
                 </AddContainer>
             </InfoContainer>
         </Wrapper>
