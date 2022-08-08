@@ -11,6 +11,9 @@ const orderRoute = require('./routes/order')
 const stripeRoute = require("./routes/stripe")
 const cors = require('cors')
 
+connectDB()
+
+
 app.use(cors())
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
@@ -24,7 +27,4 @@ app.use("/api/carts", cartRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/checkout", stripeRoute)
 
-app.listen(PORT, ()=>{
-    connectDB()
-    console.log(`server up on port ${PORT}`)
-})
+app.listen(PORT, ()=>console.log(`server up on port ${PORT}`))
