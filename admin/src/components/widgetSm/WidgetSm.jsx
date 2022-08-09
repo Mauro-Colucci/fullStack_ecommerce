@@ -1,51 +1,37 @@
 import './widgetSm.css'
 import {Visibility} from '@mui/icons-material'
+import { useEffect, useState } from 'react'
+import { userRequest } from '../../requestMethods'
 
 const WidgetSm = () => {
+    const [users, setUsers] = useState([])
+
+    useEffect(()=>{
+        const getUsers = async () =>{
+          try {
+            const res = await userRequest.get('users?new=true')
+            setUsers(res.data)
+          } catch (err) {}
+
+        }
+        getUsers()
+    },[])
+
+
   return (
     <div className='widgetSm'>
-        <span className="widgetSmTitle">New Joined Members</span>
+        <span className="widgetSmTitle">New Members</span>
         <ul className="widgetSmList">
-            <li className="widgetSmListItem">
-                <img src="https://images.pexels.com/photos/5794559/pexels-photo-5794559.jpeg?cs=srgb&dl=pexels-dillon-kydd-5794559.jpg&fm=jpg" alt="portrait" className="widgetSmImg" />
+            {users.map(user=>(
+                <li key={user._id} className="widgetSmListItem">
+                <img src={user.img || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"} alt="portrait" className="widgetSmImg" />
                 <div className="widgetSmUser">
-                    <span className="widgetSmUsername">Anna Keller</span>
-                    <span className="widgetSmUserTitle">Software engineer</span>
+                    <span className="widgetSmUsername">{user.username}</span>
                 </div>
                 <button className="widgetSmButton"><Visibility className='widgetSmIcon'/>Display</button>
             </li>
-            <li className="widgetSmListItem">
-                <img src="https://images.pexels.com/photos/5794559/pexels-photo-5794559.jpeg?cs=srgb&dl=pexels-dillon-kydd-5794559.jpg&fm=jpg" alt="portrait" className="widgetSmImg" />
-                <div className="widgetSmUser">
-                    <span className="widgetSmUsername">Anna Keller</span>
-                    <span className="widgetSmUserTitle">Software engineer</span>
-                </div>
-                <button className="widgetSmButton"><Visibility className='widgetSmIcon'/>Display</button>
-            </li>
-            <li className="widgetSmListItem">
-                <img src="https://images.pexels.com/photos/5794559/pexels-photo-5794559.jpeg?cs=srgb&dl=pexels-dillon-kydd-5794559.jpg&fm=jpg" alt="portrait" className="widgetSmImg" />
-                <div className="widgetSmUser">
-                    <span className="widgetSmUsername">Anna Keller</span>
-                    <span className="widgetSmUserTitle">Software engineer</span>
-                </div>
-                <button className="widgetSmButton"><Visibility className='widgetSmIcon'/>Display</button>
-            </li>
-            <li className="widgetSmListItem">
-                <img src="https://images.pexels.com/photos/5794559/pexels-photo-5794559.jpeg?cs=srgb&dl=pexels-dillon-kydd-5794559.jpg&fm=jpg" alt="portrait" className="widgetSmImg" />
-                <div className="widgetSmUser">
-                    <span className="widgetSmUsername">Anna Keller</span>
-                    <span className="widgetSmUserTitle">Software engineer</span>
-                </div>
-                <button className="widgetSmButton"><Visibility className='widgetSmIcon'/>Display</button>
-            </li>
-            <li className="widgetSmListItem">
-                <img src="https://images.pexels.com/photos/5794559/pexels-photo-5794559.jpeg?cs=srgb&dl=pexels-dillon-kydd-5794559.jpg&fm=jpg" alt="portrait" className="widgetSmImg" />
-                <div className="widgetSmUser">
-                    <span className="widgetSmUsername">Anna Keller</span>
-                    <span className="widgetSmUserTitle">Software engineer</span>
-                </div>
-                <button className="widgetSmButton"><Visibility className='widgetSmIcon'/>Display</button>
-            </li>
+            ))}
+            
         </ul>
     </div>
   )
