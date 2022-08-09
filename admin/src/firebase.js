@@ -6,7 +6,7 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 const firebaseConfig = {
     //hide yo' key
-  apiKey: "AIzaSyAkE2IJCR8tjQqURH4euHMv6nhwCYxVQIs",
+  apiKey: process.env.REACT_APP_API_KEY,
   authDomain: "admin-dash---ecommerce.firebaseapp.com",
   projectId: "admin-dash---ecommerce",
   storageBucket: "admin-dash---ecommerce.appspot.com",
